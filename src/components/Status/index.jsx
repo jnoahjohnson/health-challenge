@@ -40,5 +40,5 @@ export default () => {
     );
   }
 
-  return <div class="bg-red-800 text-white py-1 ">{details}</div>;
+  return <div className="bg-red-800 text-white py-1 ">{details}</div>;
 };

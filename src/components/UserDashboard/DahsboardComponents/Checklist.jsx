@@ -25,7 +25,7 @@ const Checklist = ({ items, selectedItems, updateSelectedItems }) => {
 
   return (
     <div className="my-5">
-      <h1 class="text-xl">Items to Complete Today</h1>
+      <h1 className="text-xl">Items to Complete Today</h1>
       <ul>
         {items.map((item, index) => {
           return (

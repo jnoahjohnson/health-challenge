@@ -17,3 +17,21 @@ export const saveData = (firebase, data) => {
       console.log("Saved Data!");
     });
 };
+
+export const getData = async (firebase) => {
+  console.log("get data");
+
+  console.log(firebase);
+
+  let user = getUser();
+  let data = {};
+
+  await firebase
+    .firestore()
+    .collection("users")
+    .doc(user.uid)
+    .get()
+    .then((result) => (data = result.data()));
+
+  return data;
+};

@@ -6,6 +6,18 @@ module.exports = {
     title: `2020 Summer Health Challenge`,
   },
   plugins: [
+    {
+      resolve: `gatsby-plugin-manifest`,
+      options: {
+        name: `2020 Health Challenge`,
+        short_name: `2020 Challenge`,
+        start_url: `/`,
+        background_color: `#f7f0eb`,
+        theme_color: `#c53030`,
+        display: `standalone`,
+        icon: `src/images/favicon.png`,
+      },
+    },
     `gatsby-plugin-react-helmet`,
     `gatsby-plugin-postcss`,
     {

@@ -9,9 +9,9 @@ const PromptLogin = () => (
       the button below to get started!
     </p>
     <br />
-    <p class="text-center">
+    <p className="text-center">
       <button
-        class="bg-red-600 hover:bg-red-800 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline self-center"
+        className="bg-red-600 hover:bg-red-800 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline self-center"
         type="button"
       >
         <Link to="/app/profile">Login</Link>
