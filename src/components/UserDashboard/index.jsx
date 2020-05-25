@@ -31,10 +31,7 @@ const UserDashboard = () => {
   //Initial States
   const user = getUser();
   const [dayOfWeek, setDayOfWeek] = useState();
-  const [currentWeek, setCurrentWeek] = useState([
-    { day: 1, month: 1 },
-    { day: 1, month: 1 },
-  ]);
+  const [currentWeek, setCurrentWeek] = useState([]);
   const [selectedItems, setSelectedItems] = useState([]);
   const { displayName } = user;
 
@@ -54,18 +51,9 @@ const UserDashboard = () => {
   //Initialize dashboard
   useEffect(() => {
     let today = new Date();
-    var first = today.getDate() - today.getDay(); // First day is the day of the month - the day of the week
-    var last = first + 6; // last day is the first day + 6
-    setCurrentWeek([
-      { day: first, month: 4 },
-      { day: last, month: 4 },
-    ]);
+    setCurrentWeek(getCurrentWeek());
     setDayOfWeek(today.getDay() === 0 ? 6 : today.getDay() - 1);
   }, []);
-
-  const updateDate = (newDate) => {
-    setDayOfWeek(newDate);
-  };
 
   //Deal with the data
   const updateSelectedItems = (itemIndex) => {
@@ -88,6 +76,7 @@ const UserDashboard = () => {
       newArray.push({
         day: dayOfWeek,
         index: itemIndex,
+        week: currentWeek,
       });
     }
 
@@ -98,7 +87,7 @@ const UserDashboard = () => {
     let arr = [];
 
     selectedItems.forEach((item) => {
-      if (item.day === dayOfWeek) {
+      if (item.day === dayOfWeek && item.week.join() === currentWeek.join()) {
         arr.push(item.index);
       }
     });
@@ -106,22 +95,52 @@ const UserDashboard = () => {
     return arr;
   };
 
-  //Setting the current week
+  //Dealing with the week
 
-  const setWeek = () => {
+  const getCurrentWeek = () => {
     let curr = new Date();
     let week = [];
 
     for (let i = 1; i <= 7; i++) {
-      let first = curr.getDate() - curr.getDay() + i;
+      let initialDay = curr.getDay() === 0 ? 7 : curr.getDay();
+      let first = curr.getDate() - initialDay + i;
       let day = new Date(curr.setDate(first)).toISOString().slice(0, 10);
       week.push(day);
     }
+
+    return week;
+  };
+
+  const getPreviousWeek = () => {
+    let curr = new Date();
+    let week = [];
+
+    for (let i = 1; i <= 7; i++) {
+      let initialDay = curr.getDay() === 0 ? 7 : curr.getDay();
+      let first = curr.getDate() - initialDay + i;
+      let day = new Date(curr.setDate(first));
+      day = new Date(day.setDate(day.getDate() - 7)).toISOString().slice(0, 10);
+      week.push(day);
+    }
+
+    return week;
+  };
+
+  const switchWeek = () => {
+    if (getCurrentWeek().join() !== currentWeek.join()) {
+      setCurrentWeek(getCurrentWeek());
+    } else {
+      setCurrentWeek(getPreviousWeek());
+    }
+  };
+
+  const updateDate = (newDate) => {
+    setDayOfWeek(newDate);
   };
 
   return (
     <View title={displayName}>
-      <CurrentDate currWeek={currentWeek} />
+      <CurrentDate currWeek={currentWeek} switchWeek={switchWeek} />
       <DateSelector currDate={dayOfWeek} selectDate={updateDate} />
       <UserDatabase />
       <Checklist
