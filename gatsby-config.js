@@ -45,6 +45,15 @@ module.exports = {
     {
       resolve: "gatsby-plugin-firebase",
       options: {
+        credentials: {
+          apiKey: "AIzaSyARY2DQpksyLxLRteZqvT1GLr5q5zN2_5o",
+          authDomain: "healthchallenge-b1d84.firebaseapp.com",
+          databaseURL: "https://healthchallenge-b1d84.firebaseio.com",
+          projectId: "healthchallenge-b1d84",
+          storageBucket: "healthchallenge-b1d84.appspot.com",
+          messagingSenderId: "855556152924",
+          appId: "1:855556152924:web:e193eb78c3f16fcc02d099",
+        },
         features: {
           auth: true,
           database: true,

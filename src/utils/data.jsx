@@ -1,6 +1,7 @@
 import { getUser } from "./auth";
+import firebase from "gatsby-plugin-firebase";
 
-export const saveData = (firebase, data) => {
+export const saveData = (data) => {
   console.log("Save firebase: ", firebase);
   console.log("Save data: ", data);
 
@@ -18,7 +19,7 @@ export const saveData = (firebase, data) => {
     });
 };
 
-export const getData = async (firebase) => {
+export const getData = async () => {
   let user = getUser();
   let data = {};
 
@@ -32,8 +33,16 @@ export const getData = async (firebase) => {
   return data;
 };
 
-export const getTasks = async (firebase) => {
+export const getTasks = async () => {
   let data = {};
+
+  let tasks = JSON.parse(window.localStorage.getItem("tasks"));
+
+  if (tasks !== undefined) {
+    console.log("Did not get from server");
+    data = tasks;
+    return tasks;
+  }
 
   await firebase
     .firestore()
@@ -41,6 +50,8 @@ export const getTasks = async (firebase) => {
     .doc("summer-health-challenge")
     .get()
     .then((result) => (data = result.data().tasks));
+
+  window.localStorage.setItem("tasks", JSON.stringify(data));
 
   return data;
 };

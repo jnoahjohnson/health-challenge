@@ -1,12 +1,10 @@
 import React, { useState, useEffect } from "react";
 import View from "../View";
 import CurrentDate from "./DahsboardComponents/CurrentDate";
-import UserDatabase from "./DahsboardComponents/UserDatabase";
 import { getUser } from "../../utils/auth";
 import { saveData, getData, getTasks } from "../../utils/data";
 import DateSelector from "./DahsboardComponents/DateSelector";
 import Checklist from "./DahsboardComponents/Checklist";
-import { useFirebase } from "gatsby-plugin-firebase";
 
 const sampleItems = [
   {
@@ -37,12 +35,15 @@ const UserDashboard = () => {
   const [isCurrWeek, setIsCurrWeek] = useState(true);
   const { displayName } = user;
 
-  //Initialize Firebase and get data
-  useFirebase((fb) => {
-    setFirebase(fb);
-    const setData = async (fb) => {
-      let userData = await getData(fb);
-      let tasksData = await getTasks(fb);
+  //Initialize dashboard
+  useEffect(() => {
+    let today = new Date();
+    setCurrentWeek(getCurrentWeek());
+    setDayOfWeek(today.getDay() === 0 ? 6 : today.getDay() - 1);
+
+    const setData = async () => {
+      let userData = await getData();
+      let tasksData = await getTasks();
       if (userData !== undefined) {
         setSelectedItems(userData.completedTasks);
       }
@@ -54,14 +55,9 @@ const UserDashboard = () => {
 
       setLoadingData(false);
     };
-    setData(fb);
-  }, []);
+    console.log("Component mounted");
 
-  //Initialize dashboard
-  useEffect(() => {
-    let today = new Date();
-    setCurrentWeek(getCurrentWeek());
-    setDayOfWeek(today.getDay() === 0 ? 6 : today.getDay() - 1);
+    setData();
   }, []);
 
   //Deal with the data
@@ -164,14 +160,13 @@ const UserDashboard = () => {
         isCurrWeek={isCurrWeek}
       />
       <DateSelector currDate={dayOfWeek} selectDate={updateDate} />
-      <UserDatabase />
       <Checklist
         items={tasksData}
         selectedItems={currentSelectedItems()}
         updateSelectedItems={updateSelectedItems}
       />
       <button
-        onClick={() => saveData(firebase, selectedItems)}
+        onClick={() => saveData(selectedItems)}
         className="bg-transparent hover:bg-red-600 text-red-600 mb-5 font-semibold hover:text-white py-1 px-3 border border-red-600 hover:border-transparent rounded"
       >
         Save

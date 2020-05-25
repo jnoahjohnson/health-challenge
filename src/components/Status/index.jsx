@@ -1,16 +1,8 @@
 import React from "react";
-import { useState } from "react";
 import { Link, navigate } from "@reach/router";
 import { getUser, isLoggedIn, logout } from "../../utils/auth";
-import { useFirebase } from "gatsby-plugin-firebase";
 
 export default () => {
-  const [firebase, setFirebase] = useState();
-
-  useFirebase((fb) => {
-    setFirebase(fb);
-  }, []);
-
   let details;
   if (!isLoggedIn()) {
     details = (
@@ -31,10 +23,10 @@ export default () => {
           href="/"
           onClick={(event) => {
             event.preventDefault();
-            logout(firebase).then(() => navigate(`/app/login`));
+            logout().then(() => navigate(`/app/login`));
           }}
         >
-          <u>log out</u>
+          <u>Log out</u>
         </a>
       </p>
     );
