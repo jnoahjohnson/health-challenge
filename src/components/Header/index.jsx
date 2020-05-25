@@ -9,7 +9,7 @@ const Header = () => {
       file(relativePath: { eq: "logo.png" }) {
         childImageSharp {
           fixed(width: 190) {
-            ...GatsbyImageSharpFixed
+            ...GatsbyImageSharpFixed_noBase64
           }
         }
       }
@@ -23,7 +23,7 @@ const Header = () => {
         {/* <span className="font-semibold text-xl">2020 Health Challenge</span> */}
 
         {/* </div> */}
-        <Img fixed={data.file.childImageSharp.fixed} />
+        <Img loading="eager" fixed={data.file.childImageSharp.fixed} />
         <div className="w-1/2 mt-1 text-md flex flex-row-reverse">
           <Link to="/app/profile">
             <a className="block text-supernova hover:text-grey-500 mr-4">
