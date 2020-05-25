@@ -26,12 +26,14 @@ const Header = () => {
         <Img fixed={data.file.childImageSharp.fixed} />
         <div className="w-1/2 mt-1 text-md flex flex-row-reverse">
           <Link to="/app/profile">
-            <a className="block text-black hover:text-grey-500 mr-4">
+            <a className="block text-supernova hover:text-grey-500 mr-4">
               Leaderboard
             </a>
           </Link>
           <Link to="/">
-            <a className="block text-black hover:text-grey-500 mr-4">Home</a>
+            <a className="block text-supernova hover:text-grey-500 mr-4">
+              Home
+            </a>
           </Link>
         </div>
       </nav>
