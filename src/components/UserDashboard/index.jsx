@@ -74,7 +74,7 @@ const UserDashboard = () => {
     if (localCompleted === undefined || localCompleted === null) {
       getCompletedTasks();
     } else {
-      setSelectedItems(localCompleted);
+      setSelectedItems(localCompleted.completedTasks);
     }
 
     setLoadingData(false);
