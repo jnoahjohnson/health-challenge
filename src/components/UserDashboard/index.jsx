@@ -3,7 +3,7 @@ import View from "../View";
 import CurrentDate from "./DahsboardComponents/CurrentDate";
 import UserDatabase from "./DahsboardComponents/UserDatabase";
 import { getUser } from "../../utils/auth";
-import { saveData, getData } from "../../utils/data";
+import { saveData, getData, getTasks } from "../../utils/data";
 import DateSelector from "./DahsboardComponents/DateSelector";
 import Checklist from "./DahsboardComponents/Checklist";
 import { useFirebase } from "gatsby-plugin-firebase";
@@ -33,19 +33,28 @@ const UserDashboard = () => {
   const [dayOfWeek, setDayOfWeek] = useState();
   const [currentWeek, setCurrentWeek] = useState([]);
   const [selectedItems, setSelectedItems] = useState([]);
+  const [tasksData, setTasksData] = useState();
+  const [isCurrWeek, setIsCurrWeek] = useState(true);
   const { displayName } = user;
 
   //Initialize Firebase and get data
   useFirebase((fb) => {
     setFirebase(fb);
-    const setUserData = async (fb) => {
+    const setData = async (fb) => {
       let userData = await getData(fb);
+      let tasksData = await getTasks(fb);
       if (userData !== undefined) {
         setSelectedItems(userData.completedTasks);
       }
+      if (tasksData !== undefined) {
+        setTasksData(tasksData);
+      }
+
+      console.log(tasksData);
+
       setLoadingData(false);
     };
-    setUserData(fb);
+    setData(fb);
   }, []);
 
   //Initialize dashboard
@@ -57,7 +66,12 @@ const UserDashboard = () => {
 
   //Deal with the data
   const updateSelectedItems = (itemIndex) => {
-    let newArray = [...selectedItems];
+    let newArray = [];
+
+    if (selectedItems !== undefined) {
+      newArray = [...selectedItems];
+    }
+
     let selected = false;
     newArray.forEach((item) => {
       if (item.day === dayOfWeek && item.index === itemIndex) {
@@ -85,8 +99,6 @@ const UserDashboard = () => {
 
   const currentSelectedItems = () => {
     let arr = [];
-
-    console.log(selectedItems);
 
     if (selectedItems !== undefined) {
       selectedItems.forEach((item) => {
@@ -133,8 +145,10 @@ const UserDashboard = () => {
   const switchWeek = () => {
     if (getCurrentWeek().join() !== currentWeek.join()) {
       setCurrentWeek(getCurrentWeek());
+      setIsCurrWeek(true);
     } else {
       setCurrentWeek(getPreviousWeek());
+      setIsCurrWeek(false);
     }
   };
 
@@ -144,11 +158,15 @@ const UserDashboard = () => {
 
   return (
     <View title={displayName}>
-      <CurrentDate currWeek={currentWeek} switchWeek={switchWeek} />
+      <CurrentDate
+        currWeek={currentWeek}
+        switchWeek={switchWeek}
+        isCurrWeek={isCurrWeek}
+      />
       <DateSelector currDate={dayOfWeek} selectDate={updateDate} />
       <UserDatabase />
       <Checklist
-        items={sampleItems}
+        items={tasksData}
         selectedItems={currentSelectedItems()}
         updateSelectedItems={updateSelectedItems}
       />

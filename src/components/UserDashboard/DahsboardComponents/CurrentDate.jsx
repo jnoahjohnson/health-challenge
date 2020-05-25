@@ -16,7 +16,7 @@ const monthNames = [
   "December",
 ];
 
-const CurrentDate = ({ currWeek, switchWeek }) => {
+const CurrentDate = ({ currWeek, switchWeek, isCurrWeek }) => {
   const getFullDate = (dayOfWeek) => {
     let currentDay = currWeek[dayOfWeek];
     let month;
@@ -40,10 +40,10 @@ const CurrentDate = ({ currWeek, switchWeek }) => {
         Week: <span>{`${getFullDate(0)} - ${getFullDate(6)}`}</span>
       </h2>
       <button
-        className="bg-transparent hover:bg-red-600 text-red-600 mb-5 font-semibold hover:text-white py-1 px-3 border border-red-600 hover:border-transparent rounded"
+        className="bg-transparent hover:bg-red-600 text-red-600 mb-5 font-semibold hover:text-white py-1 px-3 border border-red-600 hover:border-transparent rounded focus:outline-none"
         onClick={() => switchWeek()}
       >
-        Switch Weeks
+        {isCurrWeek ? "Go To Previous Week" : "Go to Current Week"}
       </button>
     </>
   );
