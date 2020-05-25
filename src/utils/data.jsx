@@ -2,10 +2,9 @@ import { getUser } from "./auth";
 import firebase from "gatsby-plugin-firebase";
 
 export const saveData = (data) => {
-  console.log("Save firebase: ", firebase);
-  console.log("Save data: ", data);
-
   let user = getUser();
+
+  window.localStorage.setItem("completed", JSON.stringify(data));
 
   firebase
     .firestore()
@@ -28,21 +27,16 @@ export const getData = async () => {
     .collection("users")
     .doc(user.uid)
     .get()
-    .then((result) => (data = result.data()));
+    .then((result) => {
+      window.localStorage.setItem("completed", JSON.stringify(result.data()));
+      return (data = result.data());
+    });
 
   return data;
 };
 
 export const getTasks = async () => {
   let data = {};
-
-  let tasks = JSON.parse(window.localStorage.getItem("tasks"));
-
-  if (tasks !== undefined) {
-    console.log("Did not get from server");
-    data = tasks;
-    return tasks;
-  }
 
   await firebase
     .firestore()

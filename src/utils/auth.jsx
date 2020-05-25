@@ -16,6 +16,7 @@ export const isLoggedIn = () => {
 };
 
 export const logout = () => {
+  window.localStorage.clear();
   return new Promise((resolve) => {
     firebase
       .auth()

@@ -22,10 +22,6 @@ const sampleItems = [
 ];
 
 const UserDashboard = () => {
-  //Firebase Variables
-  const [firebase, setFirebase] = useState();
-  const [loadingData, setLoadingData] = useState(true);
-
   //Initial States
   const user = getUser();
   const [dayOfWeek, setDayOfWeek] = useState();
@@ -33,31 +29,55 @@ const UserDashboard = () => {
   const [selectedItems, setSelectedItems] = useState([]);
   const [tasksData, setTasksData] = useState();
   const [isCurrWeek, setIsCurrWeek] = useState(true);
+  const [loadingData, setLoadingData] = useState(true);
   const { displayName } = user;
+
+  const parseData = (data) => {
+    if (data !== null && data !== undefined) {
+      return JSON.parse(data);
+    }
+
+    return data;
+  };
 
   //Initialize dashboard
   useEffect(() => {
     let today = new Date();
     setCurrentWeek(getCurrentWeek());
     setDayOfWeek(today.getDay() === 0 ? 6 : today.getDay() - 1);
+    let localCompleted = window.localStorage.getItem("completed");
+    let localTasks = window.localStorage.getItem("tasks");
 
-    const setData = async () => {
-      let userData = await getData();
+    localCompleted = parseData(localCompleted);
+    localTasks = parseData(localTasks);
+
+    const getTaskList = async () => {
       let tasksData = await getTasks();
-      if (userData !== undefined) {
-        setSelectedItems(userData.completedTasks);
-      }
       if (tasksData !== undefined) {
         setTasksData(tasksData);
       }
-
-      console.log(tasksData);
-
-      setLoadingData(false);
     };
-    console.log("Component mounted");
 
-    setData();
+    const getCompletedTasks = async () => {
+      let userData = await getData();
+      if (userData !== undefined) {
+        setSelectedItems(userData.completedTasks);
+      }
+    };
+
+    if (localTasks === undefined || localTasks === null) {
+      getTaskList();
+    } else {
+      setTasksData(localTasks);
+    }
+
+    if (localCompleted === undefined || localCompleted === null) {
+      getCompletedTasks();
+    } else {
+      setSelectedItems(localCompleted);
+    }
+
+    setLoadingData(false);
   }, []);
 
   //Deal with the data
