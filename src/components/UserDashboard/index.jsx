@@ -86,11 +86,15 @@ const UserDashboard = () => {
   const currentSelectedItems = () => {
     let arr = [];
 
-    selectedItems.forEach((item) => {
-      if (item.day === dayOfWeek && item.week.join() === currentWeek.join()) {
-        arr.push(item.index);
-      }
-    });
+    console.log(selectedItems);
+
+    if (selectedItems !== undefined) {
+      selectedItems.forEach((item) => {
+        if (item.day === dayOfWeek && item.week.join() === currentWeek.join()) {
+          arr.push(item.index);
+        }
+      });
+    }
 
     return arr;
   };
