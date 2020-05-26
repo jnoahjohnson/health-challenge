@@ -2,9 +2,7 @@ import React from "react";
 
 const Checklist = ({ items, selectedItems, updateSelectedItems }) => {
   const isSelected = (index) => {
-    console.log(index);
     if (selectedItems.indexOf(index) > -1) {
-      console.log("true!");
       return true;
     }
 
