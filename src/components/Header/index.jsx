@@ -2,6 +2,7 @@ import React from "react";
 import { Link } from "gatsby";
 import { useStaticQuery, graphql } from "gatsby";
 import Img from "gatsby-image";
+import LoginButton from "../LoginButton";
 
 const Header = () => {
   const data = useStaticQuery(graphql`
@@ -17,23 +18,24 @@ const Header = () => {
   `);
 
   return (
-    <div className="w-full items-center justify-between bg-gray-100 ">
-      <nav className="w-11/12 mx-auto flex items-center justify-between p-6 bg-transparent max-w-screen-lg">
+    <div className="w-full items-center justify-between bg-white">
+      <nav className="w-11/12 mx-auto flex items-center justify-center md:flex-row md:justify-between flex-col p-6 bg-transparent max-w-screen-lg">
         {/* <div className="items-left w-1/2 text-white mr-6 text-left"> */}
         {/* <span className="font-semibold text-xl">2020 Health Challenge</span> */}
 
         {/* </div> */}
         <Img loading="eager" fixed={data.file.childImageSharp.fixed} />
-        <div className="w-1/2 mt-1 text-md flex flex-row-reverse">
+        <div className="w-1/2 mt-1 text-md flex items-center justify-center md:justify-start mt-4 flex-row-reverse">
+          <LoginButton />
           <Link to="/app/profile">
-            <a className="block text-supernova hover:text-grey-500 mr-4">
+            <h1 className="block text-blue text-lg hover:text-mahogany mr-4">
               Leaderboard
-            </a>
+            </h1>
           </Link>
           <Link to="/">
-            <a className="block text-supernova hover:text-grey-500 mr-4">
+            <h1 className="block text-blue text-lg hover:text-mahogany mr-4">
               Home
-            </a>
+            </h1>
           </Link>
         </div>
       </nav>

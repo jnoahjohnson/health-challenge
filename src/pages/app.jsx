@@ -5,7 +5,6 @@ import Profile from "../components/Profile";
 import Login from "../components/Login";
 import PrivateRoute from "../components/PrivateRoute";
 import Status from "../components/Status";
-import Index from "./index";
 
 const App = () => (
   <Layout>

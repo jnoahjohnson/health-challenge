@@ -18,10 +18,11 @@ const DateSelector = ({ currDate, selectDate }) => {
         {daysOfWeek.map((item, index) => {
           return (
             <DayOfWeek
-              className={`rounded-full h-16 w-16 flex items-center justify-center border-solid border-2 hover:bg-red-600 hover:text-white m-1 focus:outline-none
+              key={item}
+              className={`rounded-full h-16 w-16 flex items-center justify-center border-solid border-2 hover:bg-blue hover:text-white m-1 focus:outline-none
               ${
                 index === currDate
-                  ? "border-red-500 text-red-500"
+                  ? "border-blue text-blue"
                   : "bg-white text-black"
               } `}
               onClick={() => selectDate(index)}

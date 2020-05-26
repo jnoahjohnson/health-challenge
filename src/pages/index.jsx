@@ -1,8 +1,6 @@
 import React from "react";
 import Layout from "../components/Layout";
-import View from "../components/View";
 import Status from "../components/Status";
-import PropTypes from "prop-types";
 import { isLoggedIn } from "../utils/auth";
 import PromptLogin from "../components/PromptLogin";
 import UserDashboard from "../components/UserDashboard";
@@ -21,7 +19,7 @@ import UserDashboard from "../components/UserDashboard";
 
 const Index = () => (
   <Layout>
-    <Status />
+    {/* <Status /> */}
     {isLoggedIn() ? <UserDashboard /> : <PromptLogin />}
   </Layout>
 );

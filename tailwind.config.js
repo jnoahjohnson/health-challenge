@@ -4,6 +4,9 @@ module.exports = {
     extend: {
       colors: {
         supernova: "#f7b539",
+        blue: "#32908f",
+        green: "#27c485",
+        mahogany: "#4f0902",
       },
     },
   },

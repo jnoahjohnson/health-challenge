@@ -6,21 +6,6 @@ import { saveData, getData, getTasks } from "../../utils/data";
 import DateSelector from "./DahsboardComponents/DateSelector";
 import Checklist from "./DahsboardComponents/Checklist";
 
-const sampleItems = [
-  {
-    name: "Exercise",
-    points: 10,
-  },
-  {
-    name: "Read",
-    points: 20,
-  },
-  {
-    name: "Kiss my wife",
-    points: 100000,
-  },
-];
-
 const UserDashboard = () => {
   //Initial States
   const user = getUser();
@@ -82,11 +67,7 @@ const UserDashboard = () => {
 
   //Deal with the data
   const updateSelectedItems = (itemIndex) => {
-    let newArray = [];
-
-    if (selectedItems !== undefined) {
-      newArray = [...selectedItems];
-    }
+    let newArray = [...selectedItems];
 
     let selected = false;
     newArray.forEach((item) => {
@@ -136,7 +117,8 @@ const UserDashboard = () => {
     for (let i = 1; i <= 7; i++) {
       let initialDay = curr.getDay() === 0 ? 7 : curr.getDay();
       let first = curr.getDate() - initialDay + i;
-      let day = new Date(curr.setDate(first)).toISOString().slice(0, 10);
+      let day = new Date(curr.setDate(first));
+      day = new Date(day.setDate(day.getDate() - 1)).toISOString().slice(0, 10);
       week.push(day);
     }
 
@@ -187,13 +169,12 @@ const UserDashboard = () => {
       />
       <button
         onClick={() => saveData(selectedItems)}
-        className="bg-transparent hover:bg-red-600 text-red-600 mb-5 font-semibold hover:text-white py-1 px-3 border border-red-600 hover:border-transparent rounded"
+        className="bg-transparent hover:bg-blue text-blue mb-5 font-semibold hover:text-white py-1 px-3 border border-blue font-sans hover:border-transparent rounded"
       >
         Save
       </button>
       {loadingData ? <div>Loading...</div> : null}
       <br></br>
-      This is the user dashboard
     </View>
   );
 };
