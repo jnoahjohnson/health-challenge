@@ -18,7 +18,27 @@ export const saveData = (data) => {
     });
 };
 
-export const getData = async () => {
+export const saveWeight = (data) => {
+  let user = getUser();
+
+  window.localStorage.setItem("weight", JSON.stringify(data));
+
+  firebase
+    .firestore()
+    .collection("users")
+    .doc(user.uid)
+    .set(
+      {
+        weightData: data,
+      },
+      { merge: true }
+    )
+    .then((ref) => {
+      console.log("Saved Data!");
+    });
+};
+
+export const getUserCompleted = async () => {
   let user = getUser();
   let data = {};
 
@@ -33,6 +53,26 @@ export const getData = async () => {
         JSON.stringify(result.data().completedTasks)
       );
       return (data = result.data().completedTasks);
+    });
+
+  return data;
+};
+
+export const getUserWeightData = async () => {
+  let user = getUser();
+  let data = {};
+
+  await firebase
+    .firestore()
+    .collection("users")
+    .doc(user.uid)
+    .get()
+    .then((result) => {
+      window.localStorage.setItem(
+        "weight",
+        JSON.stringify(result.data().weightData)
+      );
+      return (data = result.data().weightData);
     });
 
   return data;
@@ -66,4 +106,28 @@ export const getUserPoints = async () => {
   points = firebaseData.data().totalPoints;
 
   return points;
+};
+
+export const getLeaderboard = async () => {
+  let data = await firebase
+    .firestore()
+    .collection("leaderboard")
+    .doc("summer-points")
+    .get();
+
+  let leaderboard = data.data().leaderboard;
+
+  if (leaderboard === undefined) {
+    return [];
+  }
+
+  let points = [];
+
+  leaderboard.forEach((item) => {
+    points.push(item.points);
+  });
+
+  let sortedLeaderboard = points.sort((a, b) => b - a);
+
+  return sortedLeaderboard;
 };

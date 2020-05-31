@@ -2,7 +2,13 @@ import React, { useState, useEffect } from "react";
 import View from "../View";
 import CurrentDate from "./DahsboardComponents/CurrentDate";
 import { getUser } from "../../utils/auth";
-import { saveData, getData, getTasks } from "../../utils/data";
+import {
+  saveData,
+  getUserCompleted,
+  getUserWeightData,
+  getTasks,
+  saveWeight,
+} from "../../utils/data";
 import DateSelector from "./DahsboardComponents/DateSelector";
 import Checklist from "./DahsboardComponents/Checklist";
 import WeightInput from "./DahsboardComponents/WeightInput.jsx";
@@ -14,8 +20,14 @@ const UserDashboard = () => {
   const [currentWeek, setCurrentWeek] = useState([]);
   const [selectedItems, setSelectedItems] = useState([]);
   const [tasksData, setTasksData] = useState();
+  const [weightData, setWeightData] = useState();
+
+  const [weightInit, setWeightInit] = useState("");
+
   const [isCurrWeek, setIsCurrWeek] = useState(true);
   const [loadingData, setLoadingData] = useState(true);
+
+  //Firebase User Name
   const { displayName } = user;
 
   const parseData = (data) => {
@@ -31,11 +43,15 @@ const UserDashboard = () => {
     let today = new Date();
     setCurrentWeek(getCurrentWeek());
     setDayOfWeek(today.getDay() === 0 ? 6 : today.getDay() - 1);
+
+    //Get local data if any exists
     let localCompleted = window.localStorage.getItem("completed");
     let localTasks = window.localStorage.getItem("tasks");
+    let localWeightData = window.localStorage.getItem("weight");
 
     localCompleted = parseData(localCompleted);
     localTasks = parseData(localTasks);
+    localWeightData = parseData(localWeightData);
 
     const getTaskList = async () => {
       let tasksData = await getTasks();
@@ -45,10 +61,13 @@ const UserDashboard = () => {
     };
 
     const getCompletedTasks = async () => {
-      let userData = await getData();
-      if (userData !== undefined) {
-        setSelectedItems(userData);
-      }
+      let userCompletedTasks = await getUserCompleted();
+      setSelectedItems(userCompletedTasks);
+    };
+
+    const getWeightData = async () => {
+      let userWeightData = await getUserWeightData();
+      setWeightData(userWeightData);
     };
 
     if (localTasks === undefined || localTasks === null) {
@@ -61,6 +80,12 @@ const UserDashboard = () => {
       getCompletedTasks();
     } else {
       setSelectedItems(localCompleted);
+    }
+
+    if (localWeightData === undefined || localWeightData === null) {
+      getWeightData();
+    } else {
+      setWeightData(localWeightData);
     }
 
     setLoadingData(false);
@@ -98,7 +123,7 @@ const UserDashboard = () => {
   const currentSelectedItems = () => {
     let arr = [];
 
-    if (selectedItems !== undefined) {
+    if (selectedItems !== undefined || selectedItems !== null) {
       selectedItems.forEach((item) => {
         if (item.day === dayOfWeek && item.week.join() === currentWeek.join()) {
           arr.push(item.index);
@@ -165,6 +190,27 @@ const UserDashboard = () => {
     setDayOfWeek(newDate);
   };
 
+  //Weight
+  const submitWeight = (weight) => {
+    let newWeightData = [];
+
+    if (weightData !== undefined || weightData !== null) {
+      weightData.forEach((item) => {
+        if (item.week.join() !== currentWeek.join()) {
+          newWeightData.push(item);
+        }
+      });
+    }
+
+    newWeightData.push({
+      weight: weight,
+      week: currentWeek,
+    });
+
+    setWeightData(newWeightData);
+    saveWeight(newWeightData);
+  };
+
   return (
     <View title={displayName}>
       <CurrentDate
@@ -174,7 +220,13 @@ const UserDashboard = () => {
       />
       <DateSelector currDate={dayOfWeek} selectDate={updateDate} />
       {loadingData ? <div>Loading...</div> : null}
-      {dayOfWeek === 6 ? <WeightInput /> : null}
+      {dayOfWeek === 6 ? (
+        <WeightInput
+          submit={submitWeight}
+          weightData={weightData}
+          currentWeek={currentWeek}
+        />
+      ) : null}
       <Checklist
         items={tasksData}
         selectedItems={currentSelectedItems()}
