@@ -5,6 +5,7 @@ import { getUser } from "../../utils/auth";
 import { saveData, getData, getTasks } from "../../utils/data";
 import DateSelector from "./DahsboardComponents/DateSelector";
 import Checklist from "./DahsboardComponents/Checklist";
+import WeightInput from "./DahsboardComponents/WeightInput.jsx";
 
 const UserDashboard = () => {
   //Initial States
@@ -46,7 +47,7 @@ const UserDashboard = () => {
     const getCompletedTasks = async () => {
       let userData = await getData();
       if (userData !== undefined) {
-        setSelectedItems(userData.completedTasks);
+        setSelectedItems(userData);
       }
     };
 
@@ -59,7 +60,7 @@ const UserDashboard = () => {
     if (localCompleted === undefined || localCompleted === null) {
       getCompletedTasks();
     } else {
-      setSelectedItems(localCompleted.completedTasks);
+      setSelectedItems(localCompleted);
     }
 
     setLoadingData(false);
@@ -114,12 +115,17 @@ const UserDashboard = () => {
     let curr = new Date();
     let week = [];
 
-    for (let i = 1; i <= 7; i++) {
-      let initialDay = curr.getDay() === 0 ? 7 : curr.getDay();
-      let first = curr.getDate() - initialDay + i;
-      let day = new Date(curr.setDate(first));
-      day = new Date(day.setDate(day.getDate() - 1)).toISOString().slice(0, 10);
-      week.push(day);
+    if (curr.getDay() === 0) {
+      curr.setDate(curr.getDate() - 6);
+    } else {
+      curr.setDate(curr.getDate() - curr.getDay() + 1);
+    }
+
+    const firstDate = curr.getDate();
+
+    for (let i = 0; i < 7; i++) {
+      curr.setDate(firstDate + i);
+      week.push(curr.toISOString().slice(0, 10));
     }
 
     return week;
@@ -129,12 +135,17 @@ const UserDashboard = () => {
     let curr = new Date();
     let week = [];
 
-    for (let i = 1; i <= 7; i++) {
-      let initialDay = curr.getDay() === 0 ? 7 : curr.getDay();
-      let first = curr.getDate() - initialDay + i;
-      let day = new Date(curr.setDate(first));
-      day = new Date(day.setDate(day.getDate() - 7)).toISOString().slice(0, 10);
-      week.push(day);
+    if (curr.getDay() === 0) {
+      curr.setDate(curr.getDate() - 12);
+    } else {
+      curr.setDate(curr.getDate() - curr.getDay() - 6);
+    }
+
+    const firstDate = curr.getDate();
+
+    for (let i = 0; i < 7; i++) {
+      curr.setDate(firstDate + i);
+      week.push(curr.toISOString().slice(0, 10));
     }
 
     return week;
@@ -162,6 +173,8 @@ const UserDashboard = () => {
         isCurrWeek={isCurrWeek}
       />
       <DateSelector currDate={dayOfWeek} selectDate={updateDate} />
+      {loadingData ? <div>Loading...</div> : null}
+      {dayOfWeek === 6 ? <WeightInput /> : null}
       <Checklist
         items={tasksData}
         selectedItems={currentSelectedItems()}
@@ -173,8 +186,6 @@ const UserDashboard = () => {
       >
         Save
       </button>
-      {loadingData ? <div>Loading...</div> : null}
-      <br></br>
     </View>
   );
 };

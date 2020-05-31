@@ -28,8 +28,11 @@ export const getData = async () => {
     .doc(user.uid)
     .get()
     .then((result) => {
-      window.localStorage.setItem("completed", JSON.stringify(result.data()));
-      return (data = result.data());
+      window.localStorage.setItem(
+        "completed",
+        JSON.stringify(result.data().completedTasks)
+      );
+      return (data = result.data().completedTasks);
     });
 
   return data;
@@ -48,4 +51,19 @@ export const getTasks = async () => {
   window.localStorage.setItem("tasks", JSON.stringify(data));
 
   return data;
+};
+
+export const getUserPoints = async () => {
+  let user = getUser();
+  let points;
+
+  let firebaseData = await firebase
+    .firestore()
+    .collection("users")
+    .doc(user.uid)
+    .get();
+
+  points = firebaseData.data().totalPoints;
+
+  return points;
 };

@@ -25,7 +25,7 @@ const Header = () => {
 
         {/* </div> */}
         <Img loading="eager" fixed={data.file.childImageSharp.fixed} />
-        <div className="md:w-1/2 w-full mt-1 text-md flex items-center justify-center md:justify-start mt-4 flex-row-reverse">
+        <div className="md:w-1/2 w-full mt-1 text-md flex items-center justify-center md:justify-start mt-4 md:mt-0 flex-row-reverse">
           <LoginButton />
           <Link to="/app/profile">
             <h1 className="block text-blue text-lg hover:text-mahogany mr-4">
