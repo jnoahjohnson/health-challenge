@@ -32,7 +32,7 @@ const Profile = () => {
   return (
     <View title="Leaderboard">
       <div>
-        <h1 className="text-xl">
+        <h1 className="text-xl mb-5">
           Your Points -{" "}
           {loading
             ? "Loading..."
@@ -41,11 +41,11 @@ const Profile = () => {
             : userPoints}{" "}
         </h1>
 
-        <div classNmae="flex flex-col w-64 text-center">
+        <div className="flex flex-col w-full text-center">
           <div className="flex flex-row justify-center text-center">
-            <h1 className="w-1/6 text-xl text-blue">Position</h1>
+            <h1 className="w-1/2 md:w-1/4 text-xl text-blue">Position</h1>
             <div className="w-10"></div>
-            <h1 className="w-1/6 text-xl text-blue">Points</h1>
+            <h1 className="w-1/2 md:w-1/4 text-xl text-blue">Points</h1>
           </div>
           {loading ? (
             <div className="flex flex-row justify-center text-center">
@@ -60,9 +60,9 @@ const Profile = () => {
             leaderboard.map((item, index) => {
               return (
                 <div className="flex flex-row justify-center text-center">
-                  <p className="w-1/6 text-lg">{index + 1}</p>
+                  <p className="w-1/2 md:w-1/4 text-lg">{index + 1}</p>
                   <div className="w-10"></div>
-                  <p className="w-1/6 text-lg">{item}</p>
+                  <p className="w-1/2 md:w-1/4 text-lg">{item}</p>
                 </div>
               );
             })

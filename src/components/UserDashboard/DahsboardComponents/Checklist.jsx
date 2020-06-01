@@ -17,16 +17,24 @@ const Checklist = ({ items, selectedItems, updateSelectedItems }) => {
           ? null
           : items.map((item, index) => {
               return (
-                <li className="flex flex-row items-center my-4">
+                <li className="flex fflex-row items-center my-4">
                   <button
-                    className={`w-5 h-5 rounded-full bg-white border-solid border-2 mr-2 focus:outline-none ${
+                    className={`w-5 h-5 rounded-full bg-white border-solid border-2 mr-4 focus:outline-none ${
                       isSelected(index) ? "bg-blue" : "bg-white"
                     }`}
                     onClick={() => updateSelectedItems(index)}
                   >
                     {" "}
                   </button>
-                  <p className="text-xl font-sans">{`${item.name} - ${item.points} points`}</p>
+                  <div className="flex-1 flex md:flex-row flex-col md:items-end items-startflex-wrap">
+                    <p className="text-xl font-sans">{item.name}</p>
+                    <p className="text-sm font-sans text-gray-600 ml-2 pb-px">
+                      {item.points} Points
+                      {item.description !== undefined
+                        ? `. ${item.description}.`
+                        : null}
+                    </p>
+                  </div>
                 </li>
               );
             })}

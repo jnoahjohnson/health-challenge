@@ -8,6 +8,7 @@ import {
   getUserWeightData,
   getTasks,
   saveWeight,
+  handleVersion,
 } from "../../utils/data";
 import DateSelector from "./DahsboardComponents/DateSelector";
 import Checklist from "./DahsboardComponents/Checklist";
@@ -22,7 +23,7 @@ const UserDashboard = () => {
   const [tasksData, setTasksData] = useState();
   const [weightData, setWeightData] = useState();
 
-  const [weightInit, setWeightInit] = useState("");
+  const [isSaved, setIsSaved] = useState(false);
 
   const [isCurrWeek, setIsCurrWeek] = useState(true);
   const [loadingData, setLoadingData] = useState(true);
@@ -30,12 +31,13 @@ const UserDashboard = () => {
   //Firebase User Name
   const { displayName } = user;
 
-  const parseData = (data) => {
-    if (data !== null && data !== undefined) {
-      return JSON.parse(data);
+  const parseData = async (data) => {
+    let parsedData = "";
+    if (data === null || data === "undefined" || data === undefined) {
+      return parsedData;
     }
-
-    return data;
+    parsedData = await JSON.parse(data);
+    return parsedData;
   };
 
   //Initialize dashboard
@@ -44,14 +46,11 @@ const UserDashboard = () => {
     setCurrentWeek(getCurrentWeek());
     setDayOfWeek(today.getDay() === 0 ? 6 : today.getDay() - 1);
 
-    //Get local data if any exists
-    let localCompleted = window.localStorage.getItem("completed");
-    let localTasks = window.localStorage.getItem("tasks");
-    let localWeightData = window.localStorage.getItem("weight");
+    let localCompleted;
+    let localTasks;
+    let localWeightData;
 
-    localCompleted = parseData(localCompleted);
-    localTasks = parseData(localTasks);
-    localWeightData = parseData(localWeightData);
+    //Get local data if any exists
 
     const getTaskList = async () => {
       let tasksData = await getTasks();
@@ -70,30 +69,52 @@ const UserDashboard = () => {
       setWeightData(userWeightData);
     };
 
-    if (localTasks === undefined || localTasks === null) {
-      getTaskList();
-    } else {
-      setTasksData(localTasks);
-    }
+    const getLocalData = async () => {
+      await handleVersion();
+      localCompleted = window.localStorage.getItem("completed");
+      localTasks = window.localStorage.getItem("tasks");
+      localWeightData = window.localStorage.getItem("weight");
 
-    if (localCompleted === undefined || localCompleted === null) {
-      getCompletedTasks();
-    } else {
-      setSelectedItems(localCompleted);
-    }
+      localCompleted = await parseData(localCompleted);
+      localTasks = await parseData(localTasks);
+      localWeightData = await parseData(localWeightData);
 
-    if (localWeightData === undefined || localWeightData === null) {
-      getWeightData();
-    } else {
-      setWeightData(localWeightData);
-    }
+      if (localTasks === "") {
+        getTaskList();
+      } else {
+        setTasksData(localTasks);
+      }
+
+      if (localCompleted === "") {
+        getCompletedTasks();
+      } else {
+        setSelectedItems(localCompleted);
+      }
+
+      if (localWeightData === "") {
+        getWeightData();
+      } else {
+        setWeightData(localWeightData);
+      }
+
+      return "Done Parsing";
+    };
+
+    getLocalData();
 
     setLoadingData(false);
   }, []);
 
   //Deal with the data
   const updateSelectedItems = (itemIndex) => {
-    let newArray = [...selectedItems];
+    let newArray = [];
+    if (
+      selectedItems !== undefined &&
+      selectedItems !== null &&
+      selectedItems !== []
+    ) {
+      newArray = [...selectedItems];
+    }
 
     let selected = false;
     newArray.forEach((item) => {
@@ -123,7 +144,12 @@ const UserDashboard = () => {
   const currentSelectedItems = () => {
     let arr = [];
 
-    if (selectedItems !== undefined || selectedItems !== null) {
+    if (
+      selectedItems !== undefined &&
+      selectedItems !== null &&
+      selectedItems !== [] &&
+      selectedItems.length > 0
+    ) {
       selectedItems.forEach((item) => {
         if (item.day === dayOfWeek && item.week.join() === currentWeek.join()) {
           arr.push(item.index);
@@ -141,7 +167,7 @@ const UserDashboard = () => {
     let week = [];
 
     if (curr.getDay() === 0) {
-      curr.setDate(curr.getDate() - 6);
+      curr.setDate(curr.getDate() - 7);
     } else {
       curr.setDate(curr.getDate() - curr.getDay() + 1);
     }
@@ -161,7 +187,7 @@ const UserDashboard = () => {
     let week = [];
 
     if (curr.getDay() === 0) {
-      curr.setDate(curr.getDate() - 12);
+      curr.setDate(curr.getDate() - 14);
     } else {
       curr.setDate(curr.getDate() - curr.getDay() - 6);
     }
@@ -194,7 +220,7 @@ const UserDashboard = () => {
   const submitWeight = (weight) => {
     let newWeightData = [];
 
-    if (weightData !== undefined || weightData !== null) {
+    if (weightData !== undefined && weightData !== null && weightData !== "") {
       weightData.forEach((item) => {
         if (item.week.join() !== currentWeek.join()) {
           newWeightData.push(item);
@@ -232,12 +258,25 @@ const UserDashboard = () => {
         selectedItems={currentSelectedItems()}
         updateSelectedItems={updateSelectedItems}
       />
-      <button
-        onClick={() => saveData(selectedItems)}
-        className="bg-transparent hover:bg-blue text-blue mb-5 font-semibold hover:text-white py-1 px-3 border border-blue font-sans hover:border-transparent rounded"
-      >
-        Save
-      </button>
+      <div className="flex flex-row items-end">
+        <button
+          onClick={() => {
+            saveData(selectedItems);
+            setIsSaved(true);
+            setTimeout(() => setIsSaved(false), 1500);
+          }}
+          className="bg-transparent hover:bg-blue mr-2 text-blue font-semibold hover:text-white py-1 px-3 border border-blue font-sans hover:border-transparent rounded"
+        >
+          Save
+        </button>
+        <p
+          className={`text-gray-600 text-sm font-sans transition duration-500 ${
+            !isSaved ? "opacity-0" : "opacity-100"
+          }`}
+        >
+          Saved
+        </p>
+      </div>
     </View>
   );
 };

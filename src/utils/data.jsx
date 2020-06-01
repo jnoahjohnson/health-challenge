@@ -1,6 +1,36 @@
 import { getUser } from "./auth";
 import firebase from "gatsby-plugin-firebase";
 
+export const handleVersion = async () => {
+  let serverVersion = "";
+
+  await firebase
+    .firestore()
+    .collection("information")
+    .doc("version")
+    .get()
+    .then(
+      (result) => (serverVersion = result.data().currentVersion.toString())
+    );
+
+  let localVersion = window.localStorage.getItem("version");
+
+  if (
+    localVersion === null ||
+    localVersion === undefined ||
+    localVersion !== serverVersion
+  ) {
+    console.log("resetting");
+    window.localStorage.removeItem("tasks");
+    window.localStorage.removeItem("completed");
+    window.localStorage.removeItem("weight");
+  }
+
+  window.localStorage.setItem("version", serverVersion);
+
+  return "Done";
+};
+
 export const saveData = (data) => {
   let user = getUser();
 
@@ -48,12 +78,12 @@ export const getUserCompleted = async () => {
     .doc(user.uid)
     .get()
     .then((result) => {
-      window.localStorage.setItem(
-        "completed",
-        JSON.stringify(result.data().completedTasks)
-      );
-      return (data = result.data().completedTasks);
+      data = result.data().completedTasks;
     });
+
+  if (data === undefined) {
+    return [];
+  }
 
   return data;
 };

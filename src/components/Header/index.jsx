@@ -25,18 +25,18 @@ const Header = () => {
 
         {/* </div> */}
         <Img loading="eager" fixed={data.file.childImageSharp.fixed} />
-        <div className="md:w-1/2 w-full mt-1 text-md flex items-center justify-center md:justify-start mt-4 md:mt-0 flex-row-reverse">
-          <LoginButton />
-          <Link to="/app/profile">
-            <h1 className="block text-blue text-lg hover:text-mahogany mr-4">
-              Leaderboard
-            </h1>
-          </Link>
+        <div className="md:w-1/2 w-full mt-1 text-right flex items-center justify-center md:justify-end mt-4 md:mt-0 flex-wrap flex-row">
           <Link to="/">
-            <h1 className="block text-blue text-lg hover:text-mahogany mr-4">
+            <h1 className="block text-blue text-lg hover:text-mahogany mr-4 mb-3 md:mb-0">
               Home
             </h1>
           </Link>
+          <Link to="/app/profile">
+            <h1 className="block text-blue text-lg hover:text-mahogany mr-4 mb-3 md:mb-0">
+              Leaderboard
+            </h1>
+          </Link>
+          <LoginButton />
         </div>
       </nav>
     </div>
