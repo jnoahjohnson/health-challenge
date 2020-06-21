@@ -29,10 +29,19 @@ module.exports = {
         name: `2020 Health Challenge`,
         short_name: `2020 Challenge`,
         start_url: `/`,
-        background_color: `#f7f0eb`,
-        theme_color: `#c53030`,
+        background_color: `#ffffff`,
+        theme_color: `#4f0902`,
         display: `standalone`,
         icon: `src/images/favicon.png`,
+        icons: [
+          {
+            src: `/maskable-icon.png`,
+            sizes: `512x512`,
+            type: `image/png`,
+            purpose: `any maskable`,
+          },
+        ],
+        legacy: true,
       },
     },
     `gatsby-plugin-react-helmet`,
@@ -42,6 +51,7 @@ module.exports = {
       options: { prefixes: [`/app/*`] },
     },
     `gatsby-plugin-styled-components`,
+    `gatsby-plugin-offline`,
     {
       resolve: "gatsby-plugin-firebase",
       options: {

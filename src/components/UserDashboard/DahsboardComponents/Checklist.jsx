@@ -1,6 +1,6 @@
 import React from "react";
 
-const Checklist = ({ items, selectedItems, updateSelectedItems }) => {
+const Checklist = ({ items, selectedItems, updateSelectedItems, week }) => {
   const isSelected = (index) => {
     if (selectedItems.indexOf(index) > -1) {
       return true;
@@ -22,12 +22,19 @@ const Checklist = ({ items, selectedItems, updateSelectedItems }) => {
                     className={`w-5 h-5 rounded-full bg-white border-solid border-2 mr-4 focus:outline-none ${
                       isSelected(index) ? "bg-blue" : "bg-white"
                     }`}
-                    onClick={() => updateSelectedItems(index)}
+                    onClick={() => updateSelectedItems(index, week)}
                   >
                     {" "}
                   </button>
                   <div className="flex-1 flex md:flex-row flex-col md:items-end items-startflex-wrap">
-                    <p className="text-xl font-sans">{item.name}</p>
+                    <p
+                      className={`text-xl font-sans ${
+                        item.doubleWeek === week ? "font-bold" : "font-normal"
+                      }`}
+                    >
+                      {item.name}
+                      {item.doubleWeek === week ? " (Double Points)" : ""}
+                    </p>
                     <p className="text-sm font-sans text-gray-600 ml-2 pb-px">
                       {item.points} Points
                       {item.description !== undefined

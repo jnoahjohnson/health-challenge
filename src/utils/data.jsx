@@ -31,12 +31,14 @@ export const handleVersion = async () => {
   return "Done";
 };
 
-export const saveData = (data) => {
+export const saveData = async (data) => {
   let user = getUser();
 
   window.localStorage.setItem("completed", JSON.stringify(data));
 
-  firebase
+  let returnData = ";";
+
+  return await firebase
     .firestore()
     .collection("users")
     .doc(user.uid)
@@ -45,6 +47,7 @@ export const saveData = (data) => {
     })
     .then((ref) => {
       console.log("Saved Data!");
+      return "Saved";
     });
 };
 

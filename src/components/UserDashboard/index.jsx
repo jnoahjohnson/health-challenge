@@ -22,8 +22,10 @@ const UserDashboard = () => {
   const [selectedItems, setSelectedItems] = useState([]);
   const [tasksData, setTasksData] = useState();
   const [weightData, setWeightData] = useState();
+  const [currentSelectedWeek, setCurrentSelectedWeek] = useState();
 
   const [isSaved, setIsSaved] = useState(false);
+  const [isSaving, setIsSaving] = useState(false);
 
   const [isCurrWeek, setIsCurrWeek] = useState(true);
   const [loadingData, setLoadingData] = useState(true);
@@ -106,7 +108,8 @@ const UserDashboard = () => {
   }, []);
 
   //Deal with the data
-  const updateSelectedItems = (itemIndex) => {
+  const updateSelectedItems = (itemIndex, itemWeek) => {
+    console.log(itemWeek);
     let newArray = [];
     if (
       selectedItems !== undefined &&
@@ -118,14 +121,25 @@ const UserDashboard = () => {
 
     let selected = false;
     newArray.forEach((item) => {
-      if (item.day === dayOfWeek && item.index === itemIndex) {
+      if (
+        item.day === dayOfWeek &&
+        item.index === itemIndex &&
+        item.week[0] === itemWeek
+      ) {
         selected = true;
+        console.log(true);
       }
     });
 
     if (selected === true) {
       for (let i = 0; i < newArray.length; i++) {
-        if (newArray[i].day === dayOfWeek && itemIndex === newArray[i].index) {
+        if (
+          newArray[i].day === dayOfWeek &&
+          itemIndex === newArray[i].index &&
+          newArray[i].week[0] === itemWeek
+        ) {
+          console.log(newArray[i].week[0], itemWeek);
+          console.log("Delete!");
           newArray.splice(i, 1);
           break;
         }
@@ -167,17 +181,34 @@ const UserDashboard = () => {
     let week = [];
 
     if (curr.getDay() === 0) {
-      curr.setDate(curr.getDate() - 7);
+      curr.setDate(curr.getDate() - 6);
     } else {
       curr.setDate(curr.getDate() - curr.getDay() + 1);
     }
 
     const firstDate = curr.getDate();
+    const firstMonth = curr.getMonth();
+    const newDay = curr;
 
     for (let i = 0; i < 7; i++) {
-      curr.setDate(firstDate + i);
-      week.push(curr.toISOString().slice(0, 10));
+      newDay.setDate(firstDate + i);
+      let year = `${newDay.getFullYear()}`;
+      let month =
+        newDay.getMonth() >= 10
+          ? `${newDay.getMonth() + 1}`
+          : `0${newDay.getMonth() + 1}`;
+      let day =
+        newDay.getDate() < 10 ? `0${newDay.getDate()}` : `${newDay.getDate()}`;
+
+      week.push(year + "-" + month + "-" + day);
+
+      // week.push(curr.toISOString().slice(0, 10));
+      newDay.setMonth(firstMonth);
+      newDay.setDate(firstDate);
+      console.log("new:", newDay);
     }
+
+    setCurrentSelectedWeek(week[0]);
 
     return week;
   };
@@ -187,7 +218,7 @@ const UserDashboard = () => {
     let week = [];
 
     if (curr.getDay() === 0) {
-      curr.setDate(curr.getDate() - 14);
+      curr.setDate(curr.getDate() - 13);
     } else {
       curr.setDate(curr.getDate() - curr.getDay() - 6);
     }
@@ -196,8 +227,18 @@ const UserDashboard = () => {
 
     for (let i = 0; i < 7; i++) {
       curr.setDate(firstDate + i);
-      week.push(curr.toISOString().slice(0, 10));
+      let year = `${curr.getFullYear()}`;
+      let month =
+        curr.getMonth() >= 10
+          ? `${curr.getMonth() + 1}`
+          : `0${curr.getMonth() + 1}`;
+      let day =
+        curr.getDate() < 10 ? `0${curr.getDate()}` : `${curr.getDate()}`;
+
+      week.push(year + "-" + month + "-" + day);
     }
+
+    setCurrentSelectedWeek(week[0]);
 
     return week;
   };
@@ -257,18 +298,31 @@ const UserDashboard = () => {
         items={tasksData}
         selectedItems={currentSelectedItems()}
         updateSelectedItems={updateSelectedItems}
+        week={currentWeek[0]}
       />
       <div className="flex flex-row items-end">
         <button
-          onClick={() => {
-            saveData(selectedItems);
+          onClick={async () => {
+            setIsSaving(true);
+            await saveData(selectedItems);
+            setIsSaving(false);
             setIsSaved(true);
-            setTimeout(() => setIsSaved(false), 1500);
+            setTimeout(() => setIsSaved(false), 1000);
           }}
-          className="bg-transparent hover:bg-blue mr-2 text-blue font-semibold hover:text-white py-1 px-3 border border-blue font-sans hover:border-transparent rounded"
+          disabled={isSaving}
+          className={`${
+            isSaving ? "opacity-50 cursor-not-allowed" : null
+          } bg-transparent hover:bg-blue mr-2 text-blue font-semibold hover:text-white py-1 px-3 border border-blue font-sans hover:border-transparent rounded`}
         >
           Save
         </button>
+        <p
+          className={`text-gray-600 text-sm font-sans ${
+            isSaving ? "block" : "hidden"
+          }`}
+        >
+          Saving...
+        </p>
         <p
           className={`text-gray-600 text-sm font-sans transition duration-500 ${
             !isSaved ? "opacity-0" : "opacity-100"
